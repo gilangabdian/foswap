@@ -1,17 +1,26 @@
 import { prismaClient } from "../application/database";
 import { ResponseError } from "../error/response-error";
-import { CreateProjectRequest, ProjectResponse, UpdateProjectSettingsRequest, toProjectResponse, toPhotoResponse, PhotoResponse } from "../model/project-model";
+import type {
+  CreateProjectRequest,
+  ProjectResponse,
+  UpdateProjectSettingsRequest,
+  PhotoResponse,
+} from "../model/project-model";
+import {
+  toProjectResponse,
+  toPhotoResponse,
+} from "../model/project-model";
 import { createProjectValidation, updateProjectSettingsValidation } from "../validation/project-validation";
 import { validate } from "../validation/validation";
 import fs from "fs";
 
 const create = async (userId: string, request: CreateProjectRequest): Promise<ProjectResponse> => {
-  const projectRequest = validate(createProjectValidation, request);
+  const projectRequest = validate(createProjectValidation, request) as CreateProjectRequest;
 
   const project = await prismaClient.project.create({
     data: {
       userId: userId,
-      title: projectRequest.title,
+      title: projectRequest.title ?? null,
     },
   });
 
@@ -52,7 +61,7 @@ const get = async (userId: string, projectId: string): Promise<ProjectResponse> 
 };
 
 const updateSettings = async (userId: string, request: UpdateProjectSettingsRequest): Promise<ProjectResponse> => {
-  const updateRequest = validate(updateProjectSettingsValidation, request);
+  const updateRequest = validate(updateProjectSettingsValidation, request) as UpdateProjectSettingsRequest;
 
   const totalProjectInDatabase = await prismaClient.project.count({
     where: {
@@ -65,17 +74,18 @@ const updateSettings = async (userId: string, request: UpdateProjectSettingsRequ
     throw new ResponseError(404, "Project is not found");
   }
 
+  const dataToUpdate: any = {};
+  if (updateRequest.title !== undefined) dataToUpdate.title = updateRequest.title;
+  if (updateRequest.templateId !== undefined) dataToUpdate.templateId = updateRequest.templateId;
+  if (updateRequest.transitionDuration !== undefined) dataToUpdate.transitionDuration = updateRequest.transitionDuration;
+  if (updateRequest.backgroundType !== undefined) dataToUpdate.backgroundType = updateRequest.backgroundType;
+  if (updateRequest.backgroundColor !== undefined) dataToUpdate.backgroundColor = updateRequest.backgroundColor;
+
   const project = await prismaClient.project.update({
     where: {
       id: updateRequest.id,
     },
-    data: {
-      title: updateRequest.title,
-      templateId: updateRequest.templateId,
-      transitionDuration: updateRequest.transitionDuration,
-      backgroundType: updateRequest.backgroundType,
-      backgroundColor: updateRequest.backgroundColor,
-    },
+    data: dataToUpdate,
     include: {
       photos: true,
       template: true,
@@ -85,7 +95,11 @@ const updateSettings = async (userId: string, request: UpdateProjectSettingsRequ
   return toProjectResponse(project);
 };
 
-const uploadPhotos = async (userId: string, projectId: string, files: Express.Multer.File[]): Promise<PhotoResponse[]> => {
+const uploadPhotos = async (
+  userId: string,
+  projectId: string,
+  files: Express.Multer.File[],
+): Promise<PhotoResponse[]> => {
   const project = await prismaClient.project.findFirst({
     where: {
       id: projectId,
@@ -123,7 +137,7 @@ const uploadPhotos = async (userId: string, projectId: string, files: Express.Mu
     },
     orderBy: {
       sequence: "asc",
-    }
+    },
   });
 
   return savedPhotos.map(toPhotoResponse);

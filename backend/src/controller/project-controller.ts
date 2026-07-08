@@ -1,12 +1,12 @@
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import projectService from "../service/project-service";
-import { CreateProjectRequest, UpdateProjectSettingsRequest } from "../model/project-model";
+import type { CreateProjectRequest, UpdateProjectSettingsRequest } from "../model/project-model";
 
 const create = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user!.id;
     const request = req.body as CreateProjectRequest;
-    
+
     const result = await projectService.create(userId, request);
     res.status(201).json({
       data: result,
@@ -19,7 +19,7 @@ const create = async (req: Request, res: Response, next: NextFunction) => {
 const getAll = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user!.id;
-    
+
     const result = await projectService.getAll(userId);
     res.status(200).json({
       data: result,
@@ -32,8 +32,8 @@ const getAll = async (req: Request, res: Response, next: NextFunction) => {
 const get = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user!.id;
-    const projectId = req.params.id;
-    
+    const projectId = req.params.id as string;
+
     const result = await projectService.get(userId, projectId);
     res.status(200).json({
       data: result,
@@ -47,8 +47,8 @@ const updateSettings = async (req: Request, res: Response, next: NextFunction) =
   try {
     const userId = req.user!.id;
     const request = req.body as UpdateProjectSettingsRequest;
-    request.id = req.params.id;
-    
+    request.id = req.params.id as string;
+
     const result = await projectService.updateSettings(userId, request);
     res.status(200).json({
       data: result,
@@ -61,11 +61,11 @@ const updateSettings = async (req: Request, res: Response, next: NextFunction) =
 const uploadPhotos = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user!.id;
-    const projectId = req.params.id;
-    
+    const projectId = req.params.id as string;
+
     // Multer places the array of files in req.files
     const files = req.files as Express.Multer.File[];
-    
+
     if (!files || files.length === 0) {
       res.status(400).json({
         errors: {
@@ -87,9 +87,9 @@ const uploadPhotos = async (req: Request, res: Response, next: NextFunction) => 
 const deletePhoto = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user!.id;
-    const projectId = req.params.id;
-    const photoId = req.params.photoId;
-    
+    const projectId = req.params.id as string;
+    const photoId = req.params.photoId as string;
+
     const result = await projectService.deletePhoto(userId, projectId, photoId);
     res.status(200).json({
       data: result,
@@ -102,8 +102,8 @@ const deletePhoto = async (req: Request, res: Response, next: NextFunction) => {
 const generateVideo = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user!.id;
-    const projectId = req.params.id;
-    
+    const projectId = req.params.id as string;
+
     const result = await projectService.generateVideo(userId, projectId);
     res.status(200).json({
       data: result,
@@ -116,8 +116,8 @@ const generateVideo = async (req: Request, res: Response, next: NextFunction) =>
 const getStatus = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user!.id;
-    const projectId = req.params.id;
-    
+    const projectId = req.params.id as string;
+
     const result = await projectService.getStatus(userId, projectId);
     res.status(200).json({
       data: result,
@@ -130,8 +130,8 @@ const getStatus = async (req: Request, res: Response, next: NextFunction) => {
 const getDownload = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user!.id;
-    const projectId = req.params.id;
-    
+    const projectId = req.params.id as string;
+
     const result = await projectService.getDownload(userId, projectId);
     res.status(200).json({
       data: result,

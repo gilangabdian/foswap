@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import templateService from "../service/template-service";
 
 const get = async (req: Request, res: Response, next: NextFunction) => {

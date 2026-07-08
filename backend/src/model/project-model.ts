@@ -1,5 +1,5 @@
-import { Project, Photo, Template } from "../../generated/prisma/client";
-import { TemplateResponse } from "./template-model";
+import type { Project, Photo, Template } from "../../generated/prisma/client";
+import type { TemplateResponse } from "./template-model";
 
 export type PhotoResponse = {
   id: string;
@@ -63,7 +63,7 @@ export function toPhotoResponse(photo: Photo): PhotoResponse {
 }
 
 export function toProjectResponse(
-  project: Project & { photos?: Photo[]; template?: Template | null }
+  project: Project & { photos?: Photo[]; template?: Template | null },
 ): ProjectResponse {
   const response: ProjectResponse = {
     id: project.id,
