@@ -1,0 +1,223 @@
+{
+  "profile": {
+    "get": {
+      "tags": [
+        "User Profile"
+      ],
+      "summary": "Get user profile",
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "User profile data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "$ref": "../components/schemas.json#/User"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "../components/schemas.json#/ErrorResponse"
+              }
+            }
+          }
+        }
+      },
+      "operationId": "getProfile"
+    },
+    "put": {
+      "tags": [
+        "User Profile"
+      ],
+      "summary": "Update complete user profile",
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "bio": {
+                  "type": "string",
+                  "nullable": true
+                }
+              },
+              "required": [
+                "name"
+              ]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Profile updated",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "$ref": "../components/schemas.json#/User"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "../components/schemas.json#/ErrorResponse"
+              }
+            }
+          }
+        }
+      },
+      "operationId": "putProfile"
+    },
+    "patch": {
+      "tags": [
+        "User Profile"
+      ],
+      "summary": "Update partial user profile",
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "bio": {
+                  "type": "string",
+                  "nullable": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Profile updated",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "$ref": "../components/schemas.json#/User"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "../components/schemas.json#/ErrorResponse"
+              }
+            }
+          }
+        }
+      },
+      "operationId": "patchProfile"
+    }
+  },
+  "avatar": {
+    "patch": {
+      "tags": [
+        "User Profile"
+      ],
+      "summary": "Upload user avatar",
+      "security": [
+        {
+          "BearerAuth": []
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "multipart/form-data": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "avatar": {
+                  "type": "string",
+                  "format": "binary",
+                  "description": "The avatar image file"
+                }
+              },
+              "required": [
+                "avatar"
+              ]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Avatar uploaded successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "$ref": "../components/schemas.json#/User"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Invalid file format",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "../components/schemas.json#/ErrorResponse"
+              }
+            }
+          }
+        }
+      },
+      "operationId": "patchAvatar"
+    }
+  }
+}

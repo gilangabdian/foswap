@@ -1,0 +1,66 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Foswap API",
+    "description": "Automated Aesthetic Slideshow/Story Maker (Photo-to-Video)",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api",
+      "description": "Local Development Server"
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "$ref": "./paths/auth.json#/register"
+    },
+    "/auth/login": {
+      "$ref": "./paths/auth.json#/login"
+    },
+    "/auth/logout": {
+      "$ref": "./paths/auth.json#/logout"
+    },
+    "/users/profile": {
+      "$ref": "./paths/users.json#/profile"
+    },
+    "/users/avatar": {
+      "$ref": "./paths/users.json#/avatar"
+    },
+    "/templates": {
+      "$ref": "./paths/templates.json#/templates"
+    },
+    "/projects": {
+      "$ref": "./paths/projects.json#/projects"
+    },
+    "/projects/{id}": {
+      "$ref": "./paths/projects.json#/projectDetail"
+    },
+    "/projects/{id}/settings": {
+      "$ref": "./paths/projects.json#/projectSettings"
+    },
+    "/projects/{id}/photos": {
+      "$ref": "./paths/projects.json#/projectPhotos"
+    },
+    "/projects/{id}/photos/{photoId}": {
+      "$ref": "./paths/projects.json#/projectPhotoDetail"
+    },
+    "/projects/{id}/generate": {
+      "$ref": "./paths/projects.json#/projectGenerate"
+    },
+    "/projects/{id}/status": {
+      "$ref": "./paths/projects.json#/projectStatus"
+    },
+    "/projects/{id}/download": {
+      "$ref": "./paths/projects.json#/projectDownload"
+    }
+  },
+  "components": {
+    "schemas": {
+      "$ref": "./components/schemas.json"
+    },
+    "securitySchemes": {
+      "$ref": "./components/security.json"
+    }
+  }
+}

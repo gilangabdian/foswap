@@ -1,0 +1,73 @@
+{
+  "ErrorResponse": {
+    "type": "object",
+    "properties": {
+      "errors": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": ["message"]
+      }
+    },
+    "required": ["errors"]
+  },
+  "User": {
+    "type": "object",
+    "properties": {
+      "id": { "type": "string", "format": "uuid" },
+      "email": { "type": "string", "format": "email" },
+      "name": { "type": "string" },
+      "bio": { "type": "string", "nullable": true },
+      "avatar": { "type": "string", "nullable": true },
+      "createdAt": { "type": "string", "format": "date-time" },
+      "updatedAt": { "type": "string", "format": "date-time" }
+    },
+    "required": ["id", "email", "name", "createdAt", "updatedAt"]
+  },
+  "Template": {
+    "type": "object",
+    "properties": {
+      "id": { "type": "integer" },
+      "name": { "type": "string" },
+      "description": { "type": "string", "nullable": true },
+      "animationCode": { "type": "string" }
+    },
+    "required": ["id", "name", "animationCode"]
+  },
+  "Photo": {
+    "type": "object",
+    "properties": {
+      "id": { "type": "string", "format": "uuid" },
+      "imageUrl": { "type": "string" },
+      "sequence": { "type": "integer" },
+      "projectId": { "type": "string", "format": "uuid" },
+      "createdAt": { "type": "string", "format": "date-time" }
+    },
+    "required": ["id", "imageUrl", "sequence", "projectId", "createdAt"]
+  },
+  "Project": {
+    "type": "object",
+    "properties": {
+      "id": { "type": "string", "format": "uuid" },
+      "title": { "type": "string", "nullable": true },
+      "status": { "type": "string", "enum": ["DRAFT", "PROCESSING", "DONE", "FAILED"] },
+      "transitionDuration": { "type": "integer" },
+      "backgroundType": { "type": "string", "enum": ["SOLID_COLOR", "BLUR_IMAGE"] },
+      "backgroundColor": { "type": "string", "nullable": true },
+      "resultVideoUrl": { "type": "string", "nullable": true },
+      "userId": { "type": "string", "format": "uuid" },
+      "templateId": { "type": "integer", "nullable": true },
+      "createdAt": { "type": "string", "format": "date-time" },
+      "updatedAt": { "type": "string", "format": "date-time" },
+      "photos": {
+        "type": "array",
+        "items": { "$ref": "#/Photo" }
+      },
+      "template": { "$ref": "#/Template" }
+    },
+    "required": ["id", "status", "transitionDuration", "backgroundType", "userId", "createdAt", "updatedAt"]
+  }
+}

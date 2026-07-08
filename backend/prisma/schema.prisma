@@ -1,0 +1,141 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+// ==========================================
+// ENUMS
+// ==========================================
+enum ProjectStatus {
+  DRAFT
+  PROCESSING
+  DONE
+  FAILED
+}
+
+enum BackgroundType {
+  SOLID_COLOR
+  BLUR_IMAGE
+}
+
+// ==========================================
+// MODELS
+// ==========================================
+
+model User {
+  // UUID selalu memiliki panjang 36 karakter
+  id        String    @id @default(uuid()) @db.VarChar(36)
+
+  // Email umumnya cukup 100 karakter
+  email     String    @unique @db.VarChar(100)
+
+  // Hasil hashing password (seperti bcrypt) biasanya 60 karakter, tapi 255 adalah standar aman
+  password  String    @db.VarChar(255)
+
+  name      String    @db.VarChar(100)
+
+  // Bio tidak perlu terlalu panjang, 255 karakter cukup (seperti status WhatsApp)
+  bio       String?   @db.VarChar(255)
+
+  // URL gambar bisa panjang, 255 adalah batas wajar
+  avatar    String?   @db.VarChar(255)
+
+  // JWT (JSON Web Token) atau Refresh Token bisa sangat panjang (seringkali > 300 karakter).
+  // Menggunakan @db.Text lebih aman daripada VarChar di sini.
+  token     String?   @db.Text
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // RELASI: One-to-Many (1 User memiliki banyak Project)
+  projects  Project[]
+
+  @@map("users")
+}
+
+
+model Project {
+  id                  String         @id @default(uuid()) @db.VarChar(36)
+
+  title               String?        @db.VarChar(100)
+
+  status              ProjectStatus  @default(DRAFT)
+
+  // Durasi transisi umumnya angka kecil (1, 2, 3 detik). TinyInt sangat efisien.
+  transitionDuration  Int            @default(1) @db.TinyInt
+
+  backgroundType      BackgroundType @default(SOLID_COLOR)
+
+  // Kode Hex warna selalu 7 karakter (contoh: "#000000")
+  backgroundColor     String?        @db.VarChar(7)
+
+  // URL hasil render video
+  resultVideoUrl      String?        @db.VarChar(255)
+
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  // ----------------------------------------
+  // RELASI
+  // ----------------------------------------
+
+  // Many-to-One ke User (Banyak Project dimiliki oleh 1 User)
+  userId              String         @db.VarChar(36)
+  user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Many-to-One ke Template (Banyak Project menggunakan 1 Template)
+  templateId          Int?
+  template            Template?      @relation(fields: [templateId], references: [id])
+
+  // One-to-Many ke Photo (1 Project berisi banyak Photo)
+  photos              Photo[]
+
+  @@map("projects")
+}
+
+model Template {
+  // ID menggunakan Integer biasa karena ini data master yang jumlahnya sedikit
+  id              Int       @id @default(autoincrement())
+
+  name            String    @db.VarChar(50)
+
+  description     String?   @db.VarChar(255)
+
+  // Kode unik untuk dibaca oleh engine pembuat video (misal: "3d_swap", "smooth_fade")
+  animationCode   String    @unique @db.VarChar(50)
+
+  // RELASI: One-to-Many (1 Template bisa dipakai di banyak Project)
+  projects        Project[]
+
+  @@map("templates")
+}
+
+model Photo {
+  id          String   @id @default(uuid()) @db.VarChar(36)
+
+  imageUrl    String   @db.VarChar(255)
+
+  // Urutan foto maksimal 16 sesuai idemu. TinyInt sangat cocok karena batasnya 0-255.
+  sequence    Int      @db.TinyInt
+
+  createdAt   DateTime @default(now())
+
+  // ----------------------------------------
+  // RELASI
+  // ----------------------------------------
+
+  // Many-to-One ke Project (Banyak Photo masuk ke dalam 1 Project)
+  projectId   String   @db.VarChar(36)
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("photos")
+}

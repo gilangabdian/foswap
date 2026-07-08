@@ -1,0 +1,42 @@
+{
+  "templates": {
+    "get": {
+      "tags": [
+        "Templates"
+      ],
+      "summary": "Get available templates",
+      "responses": {
+        "200": {
+          "description": "List of available video templates",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "../components/schemas.json#/Template"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "../components/schemas.json#/ErrorResponse"
+              }
+            }
+          }
+        }
+      },
+      "operationId": "getTemplates",
+      "security": []
+    }
+  }
+}
