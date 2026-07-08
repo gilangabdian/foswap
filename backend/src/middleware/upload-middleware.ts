@@ -38,3 +38,27 @@ export const uploadMiddleware = multer({
     fileSize: 5 * 1024 * 1024, // 5MB limit
   },
 });
+
+const photosDir = "public/photos";
+if (!fs.existsSync(photosDir)) {
+  fs.mkdirSync(photosDir, { recursive: true });
+}
+
+const photosStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, photosDir);
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    const filename = `${uuidv4()}${ext}`;
+    cb(null, filename);
+  },
+});
+
+export const uploadPhotosMiddleware = multer({
+  storage: photosStorage,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+});

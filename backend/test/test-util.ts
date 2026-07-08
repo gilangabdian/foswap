@@ -49,3 +49,51 @@ export const TemplateTest = {
     });
   },
 };
+
+export const ProjectTest = {
+  delete: async () => {
+    // Relying on CASCADE to delete photos, but we can do it explicitly if needed
+    const user = await prismaClient.user.findFirst({
+      where: { email: "test@gmail.com" },
+    });
+    if (user) {
+      await prismaClient.project.deleteMany({
+        where: { userId: user.id },
+      });
+    }
+  },
+  create: async () => {
+    const user = await prismaClient.user.findFirst({
+      where: { email: "test@gmail.com" },
+    });
+    if (user) {
+      const project = await prismaClient.project.create({
+        data: {
+          userId: user.id,
+          title: "Test Project",
+          transitionDuration: 1,
+          backgroundType: "SOLID_COLOR",
+          backgroundColor: "#000000",
+        },
+      });
+      return project;
+    }
+    return null;
+  },
+};
+
+export const PhotoTest = {
+  create: async (projectId: string, count: number = 2) => {
+    const data = [];
+    for (let i = 1; i <= count; i++) {
+      data.push({
+        projectId: projectId,
+        imageUrl: `http://localhost/photos/dummy${i}.jpg`,
+        sequence: i,
+      });
+    }
+    await prismaClient.photo.createMany({
+      data: data,
+    });
+  },
+};

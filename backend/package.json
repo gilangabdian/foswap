@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "tsx watch src/main.ts",
     "start": "tsx src/main.ts",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest run --no-file-parallelism",
     "docs:bundle": "redocly bundle docs/openapi/openapi.json -o docs/openapi-bundled.json",
     "docs:lint": "redocly lint docs/openapi/openapi.json"
   },
