@@ -30,3 +30,22 @@ export const UserTest = {
     });
   },
 };
+
+export const TemplateTest = {
+  delete: async () => {
+    await prismaClient.template.deleteMany({
+      where: {
+        name: "Test Template",
+      },
+    });
+  },
+  create: async () => {
+    await prismaClient.template.create({
+      data: {
+        name: "Test Template",
+        description: "Test Description",
+        animationCode: "test_animation",
+      },
+    });
+  },
+};
