@@ -24,4 +24,9 @@ userRouter.put("/api/projects/:id/settings", projectController.updateSettings);
 userRouter.post("/api/projects/:id/photos", uploadPhotosMiddleware.array("photos", 16), projectController.uploadPhotos);
 userRouter.delete("/api/projects/:id/photos/:photoId", projectController.deletePhoto);
 
+// Video Processing
+userRouter.post("/api/projects/:id/generate", projectController.generateVideo);
+userRouter.get("/api/projects/:id/status", projectController.getStatus);
+userRouter.get("/api/projects/:id/download", projectController.getDownload);
+
 export { userRouter };

@@ -99,6 +99,48 @@ const deletePhoto = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const generateVideo = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user!.id;
+    const projectId = req.params.id;
+    
+    const result = await projectService.generateVideo(userId, projectId);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+const getStatus = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user!.id;
+    const projectId = req.params.id;
+    
+    const result = await projectService.getStatus(userId, projectId);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+const getDownload = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user!.id;
+    const projectId = req.params.id;
+    
+    const result = await projectService.getDownload(userId, projectId);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 export default {
   create,
   getAll,
@@ -106,4 +148,7 @@ export default {
   updateSettings,
   uploadPhotos,
   deletePhoto,
+  generateVideo,
+  getStatus,
+  getDownload,
 };

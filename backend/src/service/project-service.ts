@@ -121,6 +121,9 @@ const uploadPhotos = async (userId: string, projectId: string, files: Express.Mu
     where: {
       projectId: projectId,
     },
+    orderBy: {
+      sequence: "asc",
+    }
   });
 
   return savedPhotos.map(toPhotoResponse);
@@ -175,15 +178,107 @@ const deletePhoto = async (userId: string, projectId: string, photoId: string): 
   });
 
   for (let i = 0; i < remainingPhotos.length; i++) {
-    if (remainingPhotos[i].sequence !== i + 1) {
+    if (remainingPhotos[i]!.sequence !== i + 1) {
       await prismaClient.photo.update({
-        where: { id: remainingPhotos[i].id },
+        where: { id: remainingPhotos[i]!.id },
         data: { sequence: i + 1 },
       });
     }
   }
 
   return "OK";
+};
+
+const generateVideo = async (userId: string, projectId: string) => {
+  const project = await prismaClient.project.findFirst({
+    where: {
+      id: projectId,
+      userId: userId,
+    },
+    include: {
+      photos: true,
+    },
+  });
+
+  if (!project) {
+    throw new ResponseError(404, "Project is not found");
+  }
+
+  if (!project.templateId) {
+    throw new ResponseError(400, "Template is not set for this project");
+  }
+
+  if (project.photos.length < 5) {
+    throw new ResponseError(400, "Project must have at least 5 photos to generate a video");
+  }
+
+  await prismaClient.project.update({
+    where: {
+      id: projectId,
+    },
+    data: {
+      status: "PROCESSING",
+    },
+  });
+
+  // Background Job Simulation
+  setTimeout(async () => {
+    try {
+      await prismaClient.project.update({
+        where: { id: projectId },
+        data: {
+          status: "DONE",
+          resultVideoUrl: "http://127.0.0.1:53412/dummy-video.mp4",
+        },
+      });
+    } catch (error) {
+      console.error("Failed to update project status in background job", error);
+    }
+  }, 1000); // Wait 1 second instead of 5 for faster tests
+
+  return {
+    message: "Video generation started",
+    status: "PROCESSING",
+  };
+};
+
+const getStatus = async (userId: string, projectId: string) => {
+  const project = await prismaClient.project.findFirst({
+    where: {
+      id: projectId,
+      userId: userId,
+    },
+  });
+
+  if (!project) {
+    throw new ResponseError(404, "Project is not found");
+  }
+
+  return {
+    status: project.status,
+    resultVideoUrl: project.resultVideoUrl,
+  };
+};
+
+const getDownload = async (userId: string, projectId: string) => {
+  const project = await prismaClient.project.findFirst({
+    where: {
+      id: projectId,
+      userId: userId,
+    },
+  });
+
+  if (!project) {
+    throw new ResponseError(404, "Project is not found");
+  }
+
+  if (project.status !== "DONE" || !project.resultVideoUrl) {
+    throw new ResponseError(400, "Video is not ready for download");
+  }
+
+  return {
+    url: project.resultVideoUrl,
+  };
 };
 
 export default {
@@ -193,4 +288,7 @@ export default {
   updateSettings,
   uploadPhotos,
   deletePhoto,
+  generateVideo,
+  getStatus,
+  getDownload,
 };

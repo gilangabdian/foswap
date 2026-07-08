@@ -38,6 +38,20 @@ export type UpdateProjectSettingsRequest = {
   backgroundColor?: string;
 };
 
+export type GenerateVideoResponse = {
+  message: string;
+  status: string;
+};
+
+export type ProjectStatusResponse = {
+  status: string;
+  resultVideoUrl: string | null;
+};
+
+export type ProjectDownloadResponse = {
+  url: string;
+};
+
 export function toPhotoResponse(photo: Photo): PhotoResponse {
   return {
     id: photo.id,

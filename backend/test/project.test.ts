@@ -181,7 +181,7 @@ describe("Projects API", () => {
       const photoToDelete = photos[1];
 
       const response = await supertest(web)
-        .delete(`/api/projects/${project!.id}/photos/${photoToDelete.id}`)
+        .delete(`/api/projects/${project!.id}/photos/${photoToDelete!.id}`)
         .set("Authorization", "Bearer test-token-12345");
 
       expect(response.status).toBe(200);
@@ -197,6 +197,91 @@ describe("Projects API", () => {
       expect(remaining[0]!.id).toBe(photos[0]!.id);
       expect(remaining[1]!.sequence).toBe(2);
       expect(remaining[1]!.id).toBe(photos[2]!.id); // Previously sequence 3, now 2
+    });
+  });
+
+  describe("Video Processing API", () => {
+    it("should reject generate if no template", async () => {
+      const project = await ProjectTest.create();
+      // Wait! ProjectTest.create doesn't set templateId
+
+      const response = await supertest(web)
+        .post(`/api/projects/${project!.id}/generate`)
+        .set("Authorization", "Bearer test-token-12345");
+
+      expect(response.status).toBe(400);
+      expect(response.body.errors).toBeDefined();
+    });
+
+    it("should reject generate if < 5 photos", async () => {
+      const project = await ProjectTest.create();
+      const template = await prismaClient.template.findFirst();
+      await prismaClient.project.update({
+        where: { id: project!.id },
+        data: { templateId: template!.id }
+      });
+      await PhotoTest.create(project!.id, 4); // Only 4 photos
+
+      const response = await supertest(web)
+        .post(`/api/projects/${project!.id}/generate`)
+        .set("Authorization", "Bearer test-token-12345");
+
+      expect(response.status).toBe(400);
+      expect(response.body.errors).toBeDefined();
+    });
+
+    it("should start generation successfully", async () => {
+      const project = await ProjectTest.create();
+      const template = await prismaClient.template.findFirst();
+      await prismaClient.project.update({
+        where: { id: project!.id },
+        data: { templateId: template!.id }
+      });
+      await PhotoTest.create(project!.id, 5); // 5 photos
+
+      const response = await supertest(web)
+        .post(`/api/projects/${project!.id}/generate`)
+        .set("Authorization", "Bearer test-token-12345");
+
+      expect(response.status).toBe(200);
+      expect(response.body.data.status).toBe("PROCESSING");
+    });
+
+    it("should check status successfully", async () => {
+      const project = await ProjectTest.create();
+
+      const response = await supertest(web)
+        .get(`/api/projects/${project!.id}/status`)
+        .set("Authorization", "Bearer test-token-12345");
+
+      expect(response.status).toBe(200);
+      expect(response.body.data.status).toBeDefined();
+    });
+
+    it("should reject download if not DONE", async () => {
+      const project = await ProjectTest.create();
+      // Default is DRAFT
+
+      const response = await supertest(web)
+        .get(`/api/projects/${project!.id}/download`)
+        .set("Authorization", "Bearer test-token-12345");
+
+      expect(response.status).toBe(400);
+    });
+
+    it("should download successfully if DONE", async () => {
+      const project = await ProjectTest.create();
+      await prismaClient.project.update({
+        where: { id: project!.id },
+        data: { status: "DONE", resultVideoUrl: "http://dummy.url/video.mp4" }
+      });
+
+      const response = await supertest(web)
+        .get(`/api/projects/${project!.id}/download`)
+        .set("Authorization", "Bearer test-token-12345");
+
+      expect(response.status).toBe(200);
+      expect(response.body.data.url).toBe("http://dummy.url/video.mp4");
     });
   });
 });
