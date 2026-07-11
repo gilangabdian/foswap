@@ -1,37 +1,51 @@
 # FoSwap Project
 
-Selamat datang di repositori utama **FoSwap**! FoSwap adalah platform inovatif untuk membuat video keren dengan menggabungkan foto-foto (*Face Swap / Transitions*) ke dalam berbagai template yang tersedia secara otomatis.
+Selamat datang di repositori utama **FoSwap**! FoSwap adalah platform SaaS inovatif untuk membuat video keren dengan menggabungkan foto-foto (*Face Swap / Transitions*) ke dalam berbagai *template* yang tersedia secara otomatis.
 
 > ⚠️ **Status Saat Ini:**
-> Saat ini, fase yang baru selesai dikerjakan secara utuh adalah bagian **Backend**. Untuk tampilan antarmuka (Frontend) akan segera dikerjakan pada fase berikutnya!
+> - **Backend**: Telah selesai 100% dan sepenuhnya fungsional.
+> - **Frontend**: Bagian Publik (*Landing Page*) dan Autentikasi (*Login & Register*) telah selesai dikerjakan dengan desain UI/UX *dark mode* yang premium, animasi *Framer Motion* interaktif, dan arsitektur *Next.js*. 
+> - **Fase Selanjutnya**: Integrasi API Login/Register ke Backend, dilanjutkan dengan pembuatan halaman *Protected Dashboard* tempat *user* mengelola proyek videonya.
 
 ## 📂 Struktur Repositori
 
-Proyek ini menggunakan arsitektur pemisahan *frontend* dan *backend* yang nantinya akan berdampingan:
+Proyek ini menggunakan arsitektur pemisahan *frontend* dan *backend* di dalam satu *repository* (*monorepo*):
 
-- `/backend` - Berisi *source code* untuk RESTful API (Node.js, Express, TypeScript, Prisma, MariaDB).
-- `/frontend` - *(Segera Hadir)* Berisi *source code* antarmuka pengguna (React / Next.js / framework UI lainnya).
+- `/backend` - Berisi *source code* untuk RESTful API.
+- `/frontend` - Berisi *source code* antarmuka pengguna berbasis *React/Next.js*.
 
-## 🚀 Memulai Backend (Saat ini)
+## 🛠️ Tech Stack
 
-Bagian *Backend* sudah sepenuhnya siap dan fungsional. Berikut adalah teknologi yang menggerakkannya:
-- **Node.js** & **TypeScript**
-- **Express.js** (Web Framework)
-- **Prisma ORM** dengan **MariaDB**
-- **Vitest** (Unit & E2E Testing)
-- **Multer** (Penanganan Upload File)
+### Frontend
+- **Framework**: Next.js (App Router)
+- **Styling**: Tailwind CSS (Wajib menggunakan latar `#151515` dan aksen `#301B3F`)
+- **Animation**: Framer Motion
+- **Icons**: Iconify
 
-### 🛠️ Instalasi & Menjalankan Backend
+### Backend
+- **Environment**: Node.js & TypeScript
+- **Web Framework**: Express.js
+- **Database ORM**: Prisma ORM dengan MariaDB
+- **Testing**: Vitest (Unit & E2E Testing)
+- **File Handling**: Multer
 
-1. Pindah ke direktori backend:
+## 🚀 Instalasi & Menjalankan Aplikasi Secara Lokal
+
+### Prasyarat
+- Node.js (versi >= 18)
+- MariaDB / MySQL
+- npm / yarn / pnpm
+
+### 1. Menjalankan Backend
+1. Masuk ke direktori backend:
    ```bash
    cd backend
    ```
-2. Instal semua dependensi:
+2. Instal dependensi:
    ```bash
    npm install
    ```
-3. Konfigurasi file `.env`. Gunakan *database* MariaDB/MySQL. Contoh:
+3. Konfigurasi file `.env` (pastikan mengarah ke *database* MariaDB Anda):
    ```env
    DATABASE_URL="mysql://username:password@localhost:3306/foswap_db"
    PORT=3000
@@ -40,16 +54,30 @@ Bagian *Backend* sudah sepenuhnya siap dan fungsional. Berikut adalah teknologi 
    ```bash
    npx prisma migrate dev
    ```
-5. Jalankan server (Mode Development):
+5. Jalankan server backend (Mode Development):
    ```bash
    npm run dev
    ```
 
-*Server akan berjalan dan bisa diuji coba.*
+### 2. Menjalankan Frontend
+Buka terminal/tab baru dan ikuti langkah berikut:
+1. Masuk ke direktori frontend:
+   ```bash
+   cd frontend
+   ```
+2. Instal dependensi:
+   ```bash
+   npm install
+   ```
+3. Jalankan server frontend:
+   ```bash
+   npm run dev
+   ```
+4. Akses `http://localhost:3000` di *browser* Anda untuk melihat hasil *Landing Page* FoSwap.
 
-### 🧪 Menjalankan Pengujian (Tests)
+## 🧪 Pengujian (Tests)
 
-Semua skenario E2E API telah lulus 100%. Untuk menjalankannya sendiri:
+Semua skenario *E2E API* pada backend telah lulus 100%. Untuk menjalankannya:
 ```bash
 cd backend
 npm run test
@@ -57,8 +85,8 @@ npm run test
 
 ## 📖 Dokumentasi API
 
-Untuk melihat dokumentasi lengkap mengenai _endpoint_ API apa saja yang tersedia, bagaimana cara mengirimkan _request_, dan rute mana saja yang dikunci (*protected*), silakan baca selengkapnya di:
+Untuk melihat dokumentasi lengkap mengenai _endpoint_ API apa saja yang tersedia, rute _protected_, dan cara mengirim *request* API:
 👉 **[Dokumentasi API Backend](./backend/docs/README.md)**
 
 ---
-*© 2026 FoSwap - All Rights Reserved.*
+*Built with ❤️ by Abdian*
